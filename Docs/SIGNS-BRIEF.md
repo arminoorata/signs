@@ -4,7 +4,7 @@
 
 **Project:** SIGNS Toolkit
 **Domain:** signs.arminoorata.com
-**Status:** Source of truth. Self-contained.
+**Status:** Source of truth for the SIGNS product. Assumes shared conventions from sibling projects (arminoorata.com voice rules at `/srv/arminoorata.com/References/Final_PersonalWebsite_Brief.md`; FAIR design system at `/srv/projects/fair/`). Those two files are load-bearing for voice and visuals; this brief does not duplicate them.
 **Date:** 2026-04-22
 **Replaces:** All briefs in `./archive/`. Do not read those for build direction.
 
@@ -30,6 +30,18 @@ This is the single source of truth for the SIGNS toolkit build. Any agent (Codex
 - Voice and design tokens inherit from `/srv/arminoorata.com/References/Final_PersonalWebsite_Brief.md`.
 
 **Review gate.** After any substantive change to this brief, to product copy, or to code, run `/srv/projects/signs/review.sh <file>`. That runs the project-standard Codex review.
+
+### Launch blockers
+
+Items that must be resolved before public launch. Each has a named owner.
+
+| Item | Current state | Owner | Resolution required |
+|------|---------------|-------|---------------------|
+| Booking URL for "Work with Armi" CTA (Section 15.3) | Placeholder `[BOOKING_URL]` | Armi | Confirm destination: Calendly, Cal.com, `/work-with-me` page, or other. |
+| Archetype draft copy (Section 14) | Names locked; takeaways and supporting copy are v1 drafts | Armi + Claude | One more iteration pass on takeaways, fix-first lines, and do-not lines. |
+| Combined-memo export schema (Section 18.3) | Schema TBD at Phase 5+ | Deferred to Phase 5+ | Not a v1 launch blocker. Shape the export today so schema extension is possible later. |
+
+All other placeholders in the brief are either locked or deliberately deferred.
 
 ---
 
@@ -398,7 +410,13 @@ This enum is locked. Scenario-by-scenario mappings are specified in each scenari
 
 **Likely received signal:** *Nice words. Small action. Probably not much behind it.*
 
-**Recommendation (output enum):** `strengthen_signal` if `signal_strength = low` and `confidence = low`; otherwise `proceed_with_clarification`.
+**Sentence-completion template:** *"You intend to signal [intent], but this may be received as a symbolic gesture because the action is smaller than the message."*
+
+**Recommendation (output enum):**
+- If `signal_strength = low` AND `confidence = low`: `strengthen_signal`.
+- Otherwise: `proceed_with_clarification`.
+
+(Both branches use only modeled inputs. No human judgment required.)
 
 **What to do:**
 - Increase the signal, or
@@ -429,6 +447,8 @@ This enum is locked. Scenario-by-scenario mappings are specified in each scenari
 **Risk:** You may be accidentally signaling promotion, favoritism, or long-term commitment.
 
 **Likely received signal:** *This means more than they said. Probably a signal about what's coming next.*
+
+**Sentence-completion template:** *"You intend to signal [intent], but this may be received as a broader commitment because a strong action without framing gets over-read."*
 
 **Recommendation (output enum):** `proceed_with_clarification`.
 
@@ -461,7 +481,11 @@ This enum is locked. Scenario-by-scenario mappings are specified in each scenari
 
 **Likely received signal:** *This is different from how similar cases went. Why.*
 
-**Recommendation (output enum):** `proceed_with_clarification` if the difference is defensible; `rethink` if the broader pattern is what needs correcting.
+**Sentence-completion template:** *"You intend to signal [intent], but this may be received as inconsistency because similar cases have been handled differently."*
+
+**Recommendation (output enum):**
+- If Mode 1 (before delivery) AND `justification_intensity = extensive`: `rethink`. (Heavy justification on an inconsistent decision predicts a bad land.)
+- Otherwise: `proceed_with_clarification`. (Name the comparable cases and the reason for the difference, in delivery.)
 
 **What to do:**
 - Acknowledge the inconsistency.
@@ -495,7 +519,11 @@ The combination is diagnostic on its own: a leader who rates themselves confiden
 
 **Likely received signal:** *Something is off, and I am not sure they see it.*
 
-**Recommendation (output enum):** `rethink` if the decision has not been delivered; `proceed_with_clarification` if delivered, with immediate perception check.
+**Sentence-completion template:** *"You intend to signal [intent], but this may be received as something you have not yet seen coming because the perception gap is large and likely underestimated."*
+
+**Recommendation (output enum):**
+- If Mode 1 (before delivery): `rethink`. (A predicted large gap with false confidence is the highest-severity trap.)
+- If Mode 2 (after delivery): `proceed_with_clarification`. (The decision is already out; the job is now perception repair.)
 
 **What to do:**
 - Surface the perception gap directly.
@@ -527,7 +555,11 @@ The combination is diagnostic on its own: a leader who rates themselves confiden
 
 **Likely received signal:** *They are working hard to make this sound fair.*
 
-**Recommendation (output enum):** `strengthen_signal` if possible; otherwise `proceed_with_clarification` with a pared-down message.
+**Sentence-completion template:** *"You intend to signal [intent], but this may be received as defensiveness because the explanation is doing more work than the signal."*
+
+**Recommendation (output enum):**
+- If Mode 1 (before delivery) AND `signal_strength = low`: `strengthen_signal`. (If the signal is low and needs heavy justification, the fix is the signal, not the talking points.)
+- Otherwise: `proceed_with_clarification` with a pared-down message.
 
 **What to do:**
 - Strengthen the signal, or
@@ -558,7 +590,11 @@ The combination is diagnostic on its own: a leader who rates themselves confiden
 
 **Likely received signal:** *Not sure what this is supposed to mean.*
 
-**Recommendation (output enum):** `rethink` if the decision has not been delivered; `proceed_with_clarification` only if intent can be credibly re-anchored in delivery.
+**Sentence-completion template:** *"You intend to signal [intent], but this may be received as ambiguity because the action carries more than one possible meaning."*
+
+**Recommendation (output enum):**
+- If Mode 1 (before delivery): `rethink`. (Misaligned intent before delivery should not ship.)
+- If Mode 2 (after delivery): `proceed_with_clarification`. (Re-anchor the intent now; the action is already taken.)
 
 **What to do:**
 - Re-anchor the decision to a clear intent.
@@ -589,7 +625,11 @@ The combination is diagnostic on its own: a leader who rates themselves confiden
 
 **Likely received signal:** *Everyone sees this. Nobody is impressed.*
 
-**Recommendation (output enum):** `strengthen_signal` if budget or scope allows; otherwise `proceed_with_clarification` with proactive reframing before assumptions set.
+**Sentence-completion template:** *"You intend to signal [intent], but this may be received as public evidence of what you cannot or will not do because a weak signal amplified by visibility reads as a statement."*
+
+**Recommendation (output enum):**
+- If Mode 1 (before delivery): `strengthen_signal`. (A high-visibility, weak-signal decision before delivery is the single most damaging Mode 1 case. If the signal genuinely cannot be strengthened, the user can choose to proceed_with_clarification manually, but the engine's recommendation is strengthen_signal.)
+- If Mode 2 (after delivery): `proceed_with_clarification`. (Proactively reframe before interpretations set.)
 
 **What to do:**
 - Strengthen the signal, or
@@ -619,6 +659,8 @@ The combination is diagnostic on its own: a leader who rates themselves confiden
 **Risk:** Low. But still requires reinforcement.
 
 **Likely received signal:** *This lands. Real recognition, clearly tied to what matters.*
+
+**Sentence-completion template:** *"You intend to signal [intent], and this will be received as [intent] because the action matches the message and the context reinforces it."*
 
 **Recommendation (output enum):** `proceed`.
 
@@ -705,7 +747,15 @@ Fast, predictive, single-decision use. Before the decision is delivered.
 ### 11.2 Time estimate
 7–12 minutes. (Grew slightly from the original 5–10 with the addition of the four structured inputs required by the engine.)
 
-### 11.3 Questions
+### 11.3 Question policy — core vs deepen
+
+Structured questions (enums, scalars) are **core** — always required, always drive the engine. Open-text questions are **deepen** — optional, drive the verbatim echoes in the strategic summary (Section 10) but not classification.
+
+In the UI, deepen questions appear with a *"Deepen this — optional"* toggle. A user rushing through can skip every open-text field and still get a complete results page. A user who wants sharper personalization can fill them.
+
+The time estimate (Section 11.2) assumes a mix. The core-only path is 4–6 minutes. The full path with deepen is 7–12 minutes.
+
+### 11.4 Questions
 
 **Story**
 
@@ -741,7 +791,7 @@ Fast, predictive, single-decision use. Before the decision is delivered.
 
 This is the Scenario 4 trap. A user who rates themselves confident on a large-gap decision is displaying the blindness Scenario 4 diagnoses.
 
-### 11.4 Outputs
+### 11.5 Outputs
 
 - Primary scenario (Section 9)
 - Secondary flags
@@ -763,9 +813,13 @@ This is the Scenario 4 trap. A user who rates themselves confident on a large-ga
 Diagnostic, reflective, single-decision analysis. After the decision has been delivered.
 
 ### 12.2 Time estimate
-40–55 minutes. (Grew from the original 35–45 with the addition of the five structured inputs required by the engine.)
+The full reflective path: 40–55 minutes. The core-only path (structured inputs only, skipping all open-text "deepen" questions): 10–15 minutes. The brief's success criteria (Section 2) want users to get value fast; the core path delivers a full results page in under 15 minutes for users who need speed.
 
-### 12.3 Questions
+### 12.3 Question policy — core vs deepen
+
+Same rule as Mode 1 (Section 11.3). Structured questions (enums, scalars) are **core** — always required. Open-text questions are **deepen** — optional, drive verbatim echoes in the strategic summary but not classification. Mode 2 has more open-text questions than Mode 1 because reflective diagnosis benefits from them, but they remain optional.
+
+### 12.4 Questions
 
 **Story**
 
@@ -812,7 +866,7 @@ Prompt the user with: *From their perspective, is this fair, or just different?*
 
 The confidence question is asked retrospectively. A leader who rates original confidence as high on a decision now judged to have a large gap is revealing the exact pattern Scenario 4 (High Gap, Low Awareness) is built to catch.
 
-### 12.4 Outputs
+### 12.5 Outputs
 
 - Full diagnosis (scenario-based, with verbatim echoes from the user's open-text answers)
 - Likely received signal
@@ -969,6 +1023,16 @@ Seven committed archetypes. Each maps to an input pattern across the decision se
 
 **Do not:** Assume explanation closes the gap. It doesn't.
 
+**Top 3 risks:**
+1. Top talent quietly updates their LinkedIn when the words stop matching the dollars.
+2. Recognition inflation: language escalates to compensate for action shrinkage, until nothing sounds real.
+3. Referrals dry up first; your own team stops recommending the place.
+
+**Priority actions:**
+1. For the next 10 decisions, require action size to match the named intent. If you cannot fund it, change the intent.
+2. Audit recent "recognition" decisions and calculate the gap between words and dollars. Walk that number into the leadership meeting.
+3. Establish a "do not overclaim" rule: language in a decision cannot exceed what the action supports.
+
 ---
 
 ### 2. The Silent Eroder
@@ -983,6 +1047,16 @@ Seven committed archetypes. Each maps to an input pattern across the decision se
 **Fix first:** Audit the 10 highest-performing employees' comp history against stated philosophy. Look for the pattern of small misses that adds up.
 
 **Do not:** Wait for a visible fracture. By then, the top tier is halfway out.
+
+**Top 3 risks:**
+1. Silent disengagement in the top quartile, invisible until a cluster of regrets lands in one quarter.
+2. Passive signals (referral decline, internal mobility drop) go unread because there is no alarm.
+3. Replacing departed top performers at 1.5–2x current comp — the real cost of silent erosion shows up in the next hire cycle.
+
+**Priority actions:**
+1. Audit the last year of comp actions for the top 10 performers. Compare to stated philosophy. Find the gap.
+2. Interview (not survey) five top performers on how the last comp cycle felt. Listen for "it just felt off."
+3. Make one high-visibility reinforcement decision for a top performer in the next 90 days. Do it right.
 
 ---
 
@@ -999,6 +1073,16 @@ Seven committed archetypes. Each maps to an input pattern across the decision se
 
 **Do not:** Defend each decision individually. That is how you got here.
 
+**Top 3 risks:**
+1. Rationales leak sideways between employees; someone pieces together the contradiction.
+2. Fairness complaints cluster by team because different managers are applying different unwritten rules.
+3. Defensive internal communications consume leadership time instead of leadership focus.
+
+**Priority actions:**
+1. Pull the last 20 comparable decisions into one view. Write the reason next to each. Surface the contradictions.
+2. Pick one governing principle. Communicate it to managers. Commit to it.
+3. Build a decision log. Every comp decision above a threshold gets its rationale recorded in the moment, before the next one pressures the logic.
+
 ---
 
 ### 4. The Over-Explainer
@@ -1013,6 +1097,16 @@ Seven committed archetypes. Each maps to an input pattern across the decision se
 **Fix first:** For the next five decisions, strengthen the signal until it no longer needs explanation. If that is impossible, name the constraint honestly.
 
 **Do not:** Keep writing better talking points. The problem is not the talking points.
+
+**Top 3 risks:**
+1. Managers lose confidence in the decisions they have to deliver, and it shows in the conversation.
+2. The justification culture trains employees to demand explanations for every decision, which scales badly.
+3. Candidates get reference-checked by current employees and hear "they had to explain it a lot."
+
+**Priority actions:**
+1. Audit average length of comp justification memos across the last cycle. Cut 50%.
+2. For the next five decisions, practice stating the signal in one sentence. If it cannot fit, strengthen the signal.
+3. Retrain managers on decision language: name what it is, name what it isn't, stop.
 
 ---
 
@@ -1029,6 +1123,16 @@ Seven committed archetypes. Each maps to an input pattern across the decision se
 
 **Do not:** Publish more principles and assume managers will converge. They will cite whichever principle supports their decision.
 
+**Top 3 risks:**
+1. Top performers learn which managers "get it" and route themselves there, distorting team dynamics.
+2. Manager-driven unfairness is harder to fix than system-driven unfairness; it looks personal.
+3. When a "generous" manager leaves, their team experiences a credibility cliff.
+
+**Priority actions:**
+1. Collect the implicit criteria managers are actually using. Publish them. Let the contradictions surface.
+2. Pick one compensation philosophy. Train to it. Enforce it, especially against well-liked managers.
+3. Centralize comp calibration across managers for at least one full cycle.
+
 ---
 
 ### 6. The Misread Performer
@@ -1043,6 +1147,16 @@ Seven committed archetypes. Each maps to an input pattern across the decision se
 **Fix first:** Before the next high-stakes decision, write two things: what you intend it to signal, and what an employee might reasonably think it signals. Close the gap before delivery.
 
 **Do not:** Assume the generosity will speak for itself.
+
+**Top 3 risks:**
+1. Real investment is consumed without the corresponding trust return.
+2. Employees leave citing "feeling undervalued" from inside your highest-investment decisions.
+3. Leadership burns out explaining decisions they feel should have spoken for themselves.
+
+**Priority actions:**
+1. Before the next high-stakes decision, write both the intent and the likely misread. Close the gap before delivery.
+2. Audit the last three "generous" decisions that landed poorly. Find the common framing failure.
+3. Add a framing rehearsal to the decision process: every high-signal decision gets a two-sentence pre-delivery script.
 
 ---
 
@@ -1059,15 +1173,38 @@ Seven committed archetypes. Each maps to an input pattern across the decision se
 
 **Do not:** Assume it is self-sustaining. One new CPO who does not inherit the discipline, and you are back in one of the others.
 
+**Top 3 risks:**
+1. One reorg, one new CPO, one growth spurt, and you regress into any of the other archetypes.
+2. The logic sits in one or two heads. If they leave, the discipline leaves with them.
+3. The pattern becomes invisible to the leaders who built it, which makes it easy to let slip.
+
+**Priority actions:**
+1. Write the logic down. Every new manager gets onboarded to it in their first 30 days.
+2. Pick two peer leaders outside the function to pressure-test the discipline annually.
+3. Name the archetype explicitly in the next leadership review: "We are a Credible Builder. The job is to stay there."
+
 ---
 
 ### 14.1 Archetype matching logic
 
 1. For each decision in the Mode 3 input set, run the scenario engine (Section 9).
 2. Aggregate across the set: compute distributions of `signal_strength`, `gap_size`, `norm_consistency`, `visibility`, firing-scenario counts.
-3. Test each archetype's input pattern against the aggregate. "Dominant" means ≥50% of decisions.
-4. If multiple archetypes match, select the one with the most specific pattern (highest number of constraints satisfied).
-5. If no archetype matches cleanly, surface a "Mixed Pattern" state that shows the dominant tendency without forcing a name.
+3. **Minimum-evidence rule:** A named archetype can only be assigned when the input set has 5 or more decisions. With 3 or 4 decisions, the engine produces a **Working Hypothesis** state (Section 14.2) — dominant tendencies are surfaced, but no archetype name is assigned. This prevents pseudo-precision from small samples (2 similar cases in a 3-decision set would otherwise brand an entire organization).
+4. Test each archetype's input pattern against the aggregate. "Dominant" means ≥50% of decisions.
+5. If multiple archetypes match, select the one with the most specific pattern (highest number of constraints satisfied).
+6. If no archetype matches cleanly with 5+ decisions, surface a "Mixed Pattern" state that shows the dominant tendency without forcing a name.
+
+### 14.2 Working Hypothesis state (3–4 decisions)
+
+When the input set has fewer than 5 decisions, the Mode 3 results page uses a modified hierarchy. No archetype name. No Section 14 takeaway sentence. Instead:
+
+- **Hero line:** *"Working Hypothesis. You've entered [N] decisions. That's enough to see tendencies, not enough to name a pattern."*
+- **Score band:** Aggregate SCS, Consistency, Clarity (as in 15.2).
+- **Dominant tendencies:** A bulleted list of the strongest signals in the distribution (e.g., "Signal strength skews low," "Consistency is unclear," "Visibility is mixed"). No named archetype.
+- **What to do next:** *"Add 2–3 more decisions to sharpen the pattern, or treat these as a starting read and pressure-test individual decisions in Mode 1."*
+- **What's Next block** (Section 15.3).
+
+No coaching themes. No priority actions. The tool is honest about what 3 decisions can and cannot tell you.
 
 ---
 
@@ -1326,7 +1463,41 @@ Create extensible models for:
 - `AssessmentResult` (SCS + primary + secondary + outputs)
 - `ExportSummary` (serializable, combined-memo-compatible)
 
-### 19.7 Privacy and data contract
+### 19.7 Storage envelope
+
+LocalStorage has a ~5–10MB quota per origin (varies by browser). A long Mode 2 session with 21 answers + open text could hit 50KB; a Mode 3 set with 10 decisions could hit 300KB+. Retained results across many sessions could accumulate. The storage spec must account for this, not assume unlimited room.
+
+**Key naming:**
+
+```
+signs:v1:session:<sessionId>        # in-progress session state
+signs:v1:result:<sessionId>         # completed result
+signs:v1:index                      # list of all sessionIds + metadata for landing page
+signs:v1:cleared:<timestamp>        # tombstone after user-initiated clear (for 30 days)
+```
+
+**Session payload shape (JSON):**
+
+```
+{
+  schemaVersion: 1,
+  sessionId: "s_abc123",
+  mode: "pressure_test" | "understand" | "spot_pattern",
+  createdAt: ISO8601,
+  updatedAt: ISO8601,
+  completedAt: ISO8601 | null,
+  answers: { [questionId]: value },
+  result: { ... } | null,  // populated only after submit
+}
+```
+
+**Quota-failure behavior:** On `QuotaExceededError` during autosave, surface a restrained modal: *"Your browser is running low on space for SIGNS. Export or clear an older session to keep going."* Do not silently drop the save.
+
+**Migration:** `schemaVersion: 1` is locked for v1. Any future schema bump writes `schemaVersion: 2` alongside. A v1 → v2 migration function runs on read if an older payload is detected; if migration fails, prompt user to export and clear.
+
+**Indexing:** The `signs:v1:index` key holds a compact list ({sessionId, mode, createdAt, completedAt, mode, archetypeOrScenario}) so the landing page can render recent sessions without reading every payload.
+
+### 19.8 Privacy and data contract
 
 Users will put sensitive organizational detail into this tool: names, comp numbers, the actual dynamics of how a specific decision went. The brief's privacy posture must match that.
 
