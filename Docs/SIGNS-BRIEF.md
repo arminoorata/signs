@@ -62,7 +62,7 @@ SIGNS stands for:
 - **S**ignal Strength
 
 The tool is both predictive and diagnostic. It does not label modes that way (too academic). Instead, the user-facing framing is:
-- **Pressure Test a Decision** (Mode 1)
+- **Diagnose a Decision** (Mode 1)
 - **Understand What Happened** (Mode 2)
 - **Spot the Pattern** (Mode 3)
 
@@ -291,7 +291,7 @@ How strong or credible the signal really is.
 
 Do not label these as diagnostic vs. predictive.
 
-#### Mode 1 — Pressure Test a Decision
+#### Mode 1 — Diagnose a Decision
 Use before a decision, to stress test likely interpretation.
 **Time:** 7–12 minutes
 **Focus:** Single decision.
@@ -739,7 +739,7 @@ An LLM pass may interpret open-text and refine classifications. Architect the da
 
 ---
 
-## 11. Mode 1 — Pressure Test a Decision
+## 11. Mode 1 — Diagnose a Decision
 
 ### 11.1 Purpose
 Fast, predictive, single-decision use. Before the decision is delivered.
@@ -1180,7 +1180,7 @@ Seven committed archetypes. Each maps to an input pattern across the decision se
 
 **Priority actions:**
 1. Write the logic down. Every new manager gets onboarded to it in their first 30 days.
-2. Pick two peer leaders outside the function to pressure-test the discipline annually.
+2. Pick two peer leaders outside the function to test the discipline annually.
 3. Name the archetype explicitly in the next leadership review: "We are a Credible Builder. The job is to stay there."
 
 ---
@@ -1201,7 +1201,7 @@ When the input set has fewer than 5 decisions, the Mode 3 results page uses a mo
 - **Hero line:** *"Working Hypothesis. You've entered [N] decisions. That's enough to see tendencies, not enough to name a pattern."*
 - **Score band:** Aggregate SCS, Consistency, Clarity (as in 15.2).
 - **Dominant tendencies:** A bulleted list of the strongest signals in the distribution (e.g., "Signal strength skews low," "Consistency is unclear," "Visibility is mixed"). No named archetype.
-- **What to do next:** *"Add 2–3 more decisions to sharpen the pattern, or treat these as a starting read and pressure-test individual decisions in Mode 1."*
+- **What to do next:** *"Add 2–3 more decisions to sharpen the pattern, or treat these as a starting read and run individual decisions through Mode 1."*
 - **What's Next block** (Section 15.3).
 
 No coaching themes. No priority actions. The tool is honest about what 3 decisions can and cannot tell you.
@@ -1267,7 +1267,7 @@ This is the business loop the success criteria (Section 2) implies. Every result
 One restrained row. Three options. Operator voice, not a sales panel.
 
 Lead line:
-> *Got what you need? Send it to someone who needs to see it, pressure-test the system behind it, or get help using it in the next comp conversation.*
+> *Got what you need? Send it to someone who needs to see it, check the system behind it, or get help using it in the next comp conversation.*
 
 Three options:
 
@@ -1390,7 +1390,7 @@ Routes use `[sessionId]` segments so in-progress flows and completed results are
 /src
   /app
     page.tsx                                 # landing (also lists recent results + unfinished sessions)
-    /pressure-test
+    /diagnose
       page.tsx                               # Mode 1 entry (creates sessionId, redirects to flow)
       flow/[sessionId]/[step]/page.tsx       # question flow
       results/[sessionId]/page.tsx

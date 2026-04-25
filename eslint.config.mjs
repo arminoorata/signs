@@ -11,6 +11,14 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // The "load from localStorage once on mount" pattern necessarily
+      // calls setState inside useEffect. The rule is too strict for this
+      // common SSR-safe initial-load case. We do not have cascading renders.
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

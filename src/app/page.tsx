@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
 
 const framework = [
@@ -59,26 +60,30 @@ const framework = [
 const modes = [
   {
     number: "01",
-    title: "Pressure Test a Decision",
-    purpose: "Use before a decision, to stress test likely interpretation.",
+    title: "Diagnose a Decision",
+    purpose:
+      "Use before a decision to check what it is likely to communicate.",
     time: "7–12 minutes",
     focus: "Single decision.",
+    href: "/diagnose",
   },
   {
     number: "02",
     title: "Understand What Happened",
     purpose:
-      "Use after a decision, to analyze why it did or did not land as intended.",
+      "Use after a decision to analyze why it did or did not land as intended.",
     time: "40–55 minutes",
     focus: "Single decision with deeper context and coaching output.",
+    href: "/understand",
   },
   {
     number: "03",
     title: "Spot the Pattern",
     purpose:
-      "Use across multiple decisions, to identify repeated signaling issues and surface an organization-level archetype.",
+      "Use across multiple decisions to surface repeated signaling issues and an organization-level archetype.",
     time: "45–60+ minutes",
     focus: "Multi-decision analysis.",
+    href: "/spot-pattern",
   },
 ];
 
@@ -97,10 +102,9 @@ export default function Home() {
           </span>
         </h1>
         <div className="max-w-2xl space-y-4 text-[15px] leading-relaxed text-muted">
-          <p>A raise. A bonus. A title change. An equity refresh.</p>
           <p>
-            You think you are sending one message. Employees often receive
-            another.
+            A raise, a bonus, a title change, an equity refresh. You think you
+            are sending one message. Employees often receive another.
           </p>
           <p>That gap is where trust is built or broken.</p>
           <p className="text-foreground">
@@ -232,28 +236,25 @@ export default function Home() {
                 Three modes
               </span>
               <h2 className="font-medium text-3xl md:text-4xl leading-tight tracking-tight text-foreground mb-4">
-                Pressure test a decision. Understand what happened. Spot the
-                pattern.
+                Diagnose a decision, understand what happened, or spot the
+                pattern across many.
               </h2>
               <p className="text-[15px] leading-relaxed text-muted">
-                The interactive assessment is in build. These are the three
-                modes that will ship.
+                Pick the mode that fits the question you are trying to answer.
               </p>
             </header>
           </Reveal>
           <Reveal>
             <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
               {modes.map((mode) => (
-                <article
+                <Link
                   key={mode.number}
-                  className="rounded-xl border border-hairline bg-surface/40 p-7 flex flex-col"
+                  href={mode.href}
+                  className="group rounded-xl border border-hairline bg-surface/40 p-7 flex flex-col transition-colors hover:border-accent/60"
                 >
                   <div className="flex items-baseline justify-between mb-4">
                     <span className="text-[13px] tracking-[0.2em] text-accent">
                       {mode.number}
-                    </span>
-                    <span className="text-[11px] tracking-[0.15em] uppercase text-muted">
-                      Available soon
                     </span>
                   </div>
                   <h3 className="font-medium text-xl text-foreground mb-3">
@@ -262,7 +263,7 @@ export default function Home() {
                   <p className="text-[14px] leading-relaxed text-muted mb-5 flex-1">
                     {mode.purpose}
                   </p>
-                  <div className="pt-4 border-t border-hairline space-y-1 text-[12px] text-muted">
+                  <div className="pt-4 border-t border-hairline space-y-1 text-[12px] text-muted mb-4">
                     <p>
                       <span className="text-foreground">Time:</span> {mode.time}
                     </p>
@@ -271,7 +272,11 @@ export default function Home() {
                       {mode.focus}
                     </p>
                   </div>
-                </article>
+                  <span className="inline-flex items-center gap-1.5 text-[13px] text-accent transition-all group-hover:gap-2.5">
+                    Start
+                    <span aria-hidden="true">→</span>
+                  </span>
+                </Link>
               ))}
             </div>
           </Reveal>
