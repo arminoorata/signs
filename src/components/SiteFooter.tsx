@@ -30,9 +30,19 @@ export default function SiteFooter() {
             Educational diagnostic. Not HR or legal advice.
           </p>
         </div>
-        <p className="text-xs uppercase tracking-[0.24em]">
-          signs.arminoorata.com
-        </p>
+        <div className="flex flex-col gap-2 md:items-end">
+          <Link
+            href="https://arminoorata.com/mark"
+            aria-label="Why A to the n and A to the alpha?"
+            className="text-xs hover:text-[var(--accent)] transition-colors"
+            style={{ color: "var(--muted)" }}
+          >
+            Why A<sup>n</sup> and A<sup>α</sup>?
+          </Link>
+          <p className="text-xs uppercase tracking-[0.24em]">
+            signs.arminoorata.com
+          </p>
+        </div>
       </div>
     </footer>
   );
