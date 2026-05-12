@@ -18,6 +18,10 @@ const links = [
   { href: "https://arminoorata.com/about", label: "About" },
   { href: "https://arminoorata.com/frameworks", label: "Frameworks" },
   { href: "https://arminoorata.com/tools", label: "Tools" },
+  {
+    href: "https://www.arminoorata.com/tools/feedback?tool=signs-toolkit",
+    label: "Feedback",
+  },
   { href: "https://arminoorata.com/connect", label: "Connect" },
 ];
 
